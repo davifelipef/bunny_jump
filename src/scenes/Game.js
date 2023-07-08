@@ -50,7 +50,6 @@ export default class Game extends Phaser.Scene
 
     create()
     {
-
         // creates the background
         this.add.image(240, 320, 'background')
             .setScrollFactor(1, 0)
@@ -115,6 +114,25 @@ export default class Game extends Phaser.Scene
             .setScrollFactor(0)
             .setOrigin(0.5, 0)
 
+        // Listen for pointer down event on the left side of the screen
+        this.input.on('pointerdown', (pointer) => {
+            if (pointer.x < this.scale.width / 2) {
+                this.player.setVelocityX(-200);
+            }
+        });
+
+        // Listen for pointer down event on the right side of the screen
+        this.input.on('pointerdown', (pointer) => {
+            if (pointer.x >= this.scale.width / 2) {
+                this.player.setVelocityX(200);
+            }
+        });
+
+        // Listen for pointer up event
+        this.input.on('pointerup', () => {
+            this.player.setVelocityX(0);
+        });
+
     }
 
     update(t, dt)
@@ -141,19 +159,13 @@ export default class Game extends Phaser.Scene
         this.player.setVelocityY(-300)
         }
 
-        // left and right input logic
-        if (this.cursors.left.isDown && !touchingDown)
-        {
-        this.player.setVelocityX(-200)
-        }
-        else if (this.cursors.right.isDown && !touchingDown)
-        {
-        this.player.setVelocityX(200)
-        }
-        else
-        {
-        // stop movement if not left or right
-        this.player.setVelocityX(0)
+        // Left and right input logic
+        if (this.cursors.left.isDown || (this.input.pointer1.isDown && this.input.pointer1.x < this.scale.width / 2)) {
+            this.player.setVelocityX(-200);
+        } else if (this.cursors.right.isDown || (this.input.pointer1.isDown && this.input.pointer1.x >= this.scale.width / 2)) {
+            this.player.setVelocityX(200);
+        } else {
+            this.player.setVelocityX(0);
         }
 
         this.horizontalWrap(this.player)
