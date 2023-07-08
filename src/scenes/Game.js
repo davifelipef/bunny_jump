@@ -93,7 +93,8 @@ export default class Game extends Phaser.Scene
         this.carrots = this.physics.add.group({
             classType: Carrot
         })
-        this.carrots.get(240, 320, 'carrot')
+        // made it 800 so the first carrot spawns off screen
+        this.carrots.get(240, 800, 'carrot')
 
         // makes the carrots collide with the platforms
         this.physics.add.collider(this.platforms, this.carrots)
