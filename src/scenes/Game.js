@@ -42,6 +42,10 @@ export default class Game extends Phaser.Scene
         this.load.image('platform', 'assets/ground_grass.png')
         // loads the player character image
         this.load.image('bunny-stand', 'assets/bunny1_stand.png')
+        // loads the player character jumpimg image
+        this.load.image('bunny-jump', 'assets/bunny1_jump.png')
+        // loads the jump sound
+        this.load.audio('jump', 'assets/sfx/phaseJump1.ogg')
         // loads the keyboard cursors
         this.cursors = this.input.keyboard.createCursorKeys()
         // loads the carrot image
@@ -109,7 +113,7 @@ export default class Game extends Phaser.Scene
         
         // creates the carrot counter
         const style = { color: '#000', fontSize: 24 }
-        this.carrotsCollectedText = this.add.text(240, 10, 'Carrots: 0'
+        this.carrotsCollectedText = this.add.text(240, 10, 'Cenouras: 0'
             , style)
             .setScrollFactor(0)
             .setOrigin(0.5, 0)
@@ -156,7 +160,18 @@ export default class Game extends Phaser.Scene
 
         if (touchingDown)
         {
-        this.player.setVelocityY(-300)
+            this.player.setVelocityY(-300)
+            // switch to jump texture
+            this.player.setTexture('bunny-jump')
+            // play jump sound
+            this.sound.play('jump')
+        }
+
+        const vy = this.player.body.velocity.y
+        if (vy > 0 && this.player.texture.key !== 'bunny-stand')
+        {
+            // switch back to jump when falling
+            this.player.setTexture('bunny-stand')
         }
 
         // Left and right input logic
@@ -235,7 +250,7 @@ export default class Game extends Phaser.Scene
          console.log(this.carrotsCollected)
 
         // create new text value and set it
-        const value = `Carrots: ${this.carrotsCollected}`
+        const value = `Cenouras: ${this.carrotsCollected}`
         this.carrotsCollectedText.setText(value)
     }
 
