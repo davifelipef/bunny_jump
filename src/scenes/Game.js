@@ -58,28 +58,39 @@ export default class Game extends Phaser.Scene
         this.add.image(240, 320, 'background')
             .setScrollFactor(1, 0)
 
-        // change to use class property intead of local variable
+        // makes the platforms part of a static group
         this.platforms = this.physics.add.staticGroup()
 
-        // then create 5 platforms from the group
-        for (let i = 0; i < 5; ++i)
-        {
-            const x = Phaser.Math.Between(80, 400)
-            const y = 150 * i
+        const numPlatforms = 5;
+        const platformSpacingY = 155; // Desired vertical spacing between platforms
 
-            // use this.platforms here as well
-            /** @type {Phaser.Physics.Arcade.Sprite} */
-            const platform = this.platforms.create(x, y, 'platform')
-            platform.scale = 0.5
+        for (let j = 0; j < 1; ++j) {
+            const startY = j * (numPlatforms * platformSpacingY);
 
-            /** @type {Phaser.Physics.Arcade.StaticBody} */
-            const body = platform.body
-            body.updateFromGameObject()
+            for (let i = 0; i < numPlatforms; ++i) {
+                const x = Phaser.Math.Between(80, 400);
+                const y = startY + platformSpacingY * i;
+
+                /** @type {Phaser.Physics.Arcade.Sprite} */
+                const platform = this.platforms.create(x, y, 'platform');
+                platform.scale = 0.5;
+
+                /** @type {Phaser.Physics.Arcade.StaticBody} */
+                const body = platform.body;
+                body.updateFromGameObject();
+            }
         }
 
         // creates the player
         this.player = this.physics.add.sprite(240, 320, 'bunny-stand')
             .setScale(0.5)
+
+        const originalWidth = this.textures.getFrame('bunny-stand').width;
+        const originalHeight = this.textures.getFrame('bunny-stand').height;
+        const scaledWidth = originalWidth * this.player.scaleX;
+        const scaledHeight = originalHeight * this.player.scaleY + 100;
+        
+        this.player.body.setSize(scaledWidth, scaledHeight);
 
         // makes the player collides with the platforms
         this.physics.add.collider(this.platforms, this.player)
@@ -160,7 +171,7 @@ export default class Game extends Phaser.Scene
 
         if (touchingDown)
         {
-            this.player.setVelocityY(-300)
+            this.player.setVelocityY(-350)
             // switch to jump texture
             this.player.setTexture('bunny-jump')
             // play jump sound
@@ -246,8 +257,8 @@ export default class Game extends Phaser.Scene
         this.physics.world.disableBody(carrot.body)
 
         // increments by 1 when a carrot is collected
-         this.carrotsCollected++
-         console.log(this.carrotsCollected)
+        this.carrotsCollected++
+        console.log(this.carrotsCollected)
 
         // create new text value and set it
         const value = `Cenouras: ${this.carrotsCollected}`
@@ -274,6 +285,5 @@ export default class Game extends Phaser.Scene
 
         return bottomPlatform
     }
-
 
 }
